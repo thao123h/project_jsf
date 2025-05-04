@@ -1,123 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
 <h:html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core">
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Employee List</title>
-	<style>
-table, th, td {
-	border: 1px solid black;
-	border-collapse: collapse;
-	padding: 8px;
-}
-</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Employee List</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+    </style>
 </h:head>
 
 <h:body>
 
-	<h:form id="addEmployee" rendered="#{!employeeBean.showForm}">
-		<h:commandButton value="Add Employee"
-			action="#{employeeBean.toggleForm}">
-			<f:ajax event="click" render="@all" execute="@this" />
-		</h:commandButton>
-	</h:form>
+    <h:form id="addEmployee" rendered="#{!employeeBean.showForm}">
+        <h:commandButton value="Add Employee"
+                         action="#{employeeBean.toggleForm}">
+            <f:ajax event="click" render="@all" execute="@this" />
+        </h:commandButton>
+    </h:form>
 
-	<h:form id="addEmployeeForm" rendered="#{employeeBean.showForm}">
-		<h3>Employee</h3>
-		<!-- Employee Code -->
+    <h:form id="addEmployeeForm" rendered="#{employeeBean.showForm}">
+        <h3>Employee</h3>
 
-		<h:inputHidden value="#{employeeBean.selectedEmployee.employeeCode}" />
+        <h:inputHidden value="#{employeeBean.selectedEmployee.employeeCode}" />
 
-		<!-- Employee Name -->
-		<h:outputLabel for="employeeName" value="Employee Name: " />
-		<h:inputText id="employeeName"
-			value="#{employeeBean.selectedEmployee.employeeName}"
-			converter="nameConverter" validator="#{employeeBean.validateName}">
-			<f:ajax event="blur" execute="@this"
-				render="employeeName messageEmployeeName" />
-		</h:inputText>
-		<h:message for="employeeName" id="messageEmployeeName"
-			style="color: red;" />
-		<br />
+        <!-- Employee Name -->
+        <h:outputLabel for="employeeName" value="Employee Name: " />
+        <h:inputText id="employeeName"
+                     value="#{employeeBean.selectedEmployee.employeeName}"
+                     converter="nameConverter" validator="#{employeeBean.validateName}">
+            <f:ajax event="blur" execute="@this"
+                    render="employeeName messageEmployeeName" />
+        </h:inputText>
+        <h:message for="employeeName" id="messageEmployeeName"
+                   style="color: red;" />
+        <br />
 
-		<!-- Date of Birth -->
-		<h:outputLabel for="dateOfBirth" value="Date of Birth: " />
-		<h:inputText id="dateOfBirth"
-			value="#{employeeBean.selectedEmployee.dateOfBirth}"
-			converter="dateConverter" validator="#{employeeBean.validateDate}">
-			<f:ajax event="blur" execute="@this"
-				render="dateOfBirth messageDateOfBirth" />
-		</h:inputText>
-		<h:message for="dateOfBirth" id="messageDateOfBirth"
-			style="color: red;" />
-		<br />
+        <!-- Date of Birth -->
+        <h:outputLabel for="dateOfBirth" value="Date of Birth: " />
+        <h:inputText id="dateOfBirth"
+                     value="#{employeeBean.selectedEmployee.dateOfBirth}"
+                     converter="dateConverter" validator="#{employeeBean.validateDate}">
+            <f:ajax event="blur" execute="@this"
+                    render="dateOfBirth messageDateOfBirth" />
+        </h:inputText>
+        <h:message for="dateOfBirth" id="messageDateOfBirth"
+                   style="color: red;" />
+        <br />
 
-		<!-- Submit Button -->
+        <!-- Buttons -->
+        <h:commandButton value="Back" action="#{employeeBean.toggleForm}">
+            <f:ajax event="click" render="@all" execute="@this" />
+        </h:commandButton>
 
-		<h:commandButton value="Back" action="#{employeeBean.toggleForm}"
-			rendered="#{employeeBean.showForm}">
-			<f:ajax event="click" render="@all" execute="@this" />
-		</h:commandButton>
+        <h:commandButton value="Save" action="#{employeeBean.save}">
+            <f:ajax execute="@form" render="@all" />
+        </h:commandButton>
 
+        <br />
+    </h:form>
 
-		<h:commandButton value="Save" action="#{employeeBean.save}">
-			<f:ajax execute="@form" render="@all" />
-		</h:commandButton>
+    <h:form id="employeeTable" rendered="#{!employeeBean.showForm}">
+        <h3>Employee List</h3>
+        <h:dataTable value="#{employeeBean.employees}" var="employee" varStatus="status">
+           
 
+            <!-- Hidden Employee Code Column -->
+            <h:column >
+              <f:facet name="header">Employee Code</f:facet>
+                <h:outputText value="#{employee.employeeCode}" />
+            </h:column>
 
-		<br />
-		<!-- Success Message -->
+            <!-- Employee Name -->
+            <h:column>
+                <f:facet name="header">Employee Name</f:facet>
+                #{employee.employeeName}
+            </h:column>
 
-	</h:form>
+            <!-- Employee Age -->
+            <h:column>
+                <f:facet name="header">Employee Age</f:facet>
+                #{employee.employeeAge}
+            </h:column>
 
+            <!-- Date of Birth -->
+            <h:column>
+                <f:facet name="header">Date of Birth</f:facet>
+                <h:outputText value="#{employee.dateOfBirth}" converter="dateConverter" />
+            </h:column>
 
-	<h:form id="employeeTable" rendered="#{!employeeBean.showForm}">
-		<h3>Employee List</h3>
-		<h:dataTable value="#{employeeBean.employees}" var="employee">
-			<h:column>
-				<f:facet name="header">STT</f:facet>
-            #{employeeBean.employees.indexOf(employee) + 1}
-        </h:column>
-
-			<h:outputText value="#{employee.employeeCode}" style="display: none;" />
-
-			<h:column>
-				<f:facet name="header">Employee Name</f:facet>
-            #{employee.employeeName}
-        </h:column>
-
-			<h:column>
-				<f:facet name="header">Employee Age</f:facet>
-            #{employee.employeeAge}
-        </h:column>
-
-			<h:column>
-				<f:facet name="header">Date of Birth</f:facet>
-				<h:outputText value="#{employee.dateOfBirth}"
-					converter="dateConverter" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">Action</f:facet>
-				<h:commandLink value="Delete" action="#{employeeBean.delete}">
-					<f:setPropertyActionListener
-						target="#{employeeBean.selectedEmployee}" value="#{employee}" />
-					<f:ajax render="employeeTable" execute="@this" />
-				</h:commandLink>
-
-				<h:commandLink value="Update" action="#{employeeBean.toggleForm}">
-					<f:setPropertyActionListener
-						target="#{employeeBean.selectedEmployee}" value="#{employee}" />
-					<f:ajax render="@all" execute="@this" />
-				</h:commandLink>
-
-			</h:column>
-		</h:dataTable>
-	</h:form>
-
+            <!-- Action -->
+            <h:column>
+                <f:facet name="header">Action</f:facet>
+                <h:commandLink value="Delete" action="#{employeeBean.delete}">
+                    <f:setPropertyActionListener target="#{employeeBean.selectedEmployee}" value="#{employee}" />
+                    <f:ajax render="employeeTable" execute="@this" />
+                </h:commandLink>
+                <h:commandLink value="Update" action="#{employeeBean.toggleForm}">
+                    <f:setPropertyActionListener target="#{employeeBean.selectedEmployee}" value="#{employee}" />
+                    <f:ajax render="@all" execute="@this" />
+                </h:commandLink>
+            </h:column>
+        </h:dataTable>
+    </h:form>
 
 </h:body>
 </h:html>

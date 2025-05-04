@@ -31,42 +31,47 @@ public class EmployeeBean implements Serializable {
 	private Employee selectedEmployee = new Employee();
 	private EmployeeDao dao = new EmployeeDao();
 	private String message;
-
-	public List<Employee> getEmployees() {
-			employees = dao.getEmployees();	
-		return employees;
-	}
-
 	public void toggleForm() {
 		this.showForm = !this.showForm;
 
 	}
 
+
+	public List<Employee> getEmployees() {
+	    if (employees == null) {
+	        employees = dao.getEmployees();
+	    }
+	    return employees;
+	}
+
 	public void delete() {
-		 if (dao.delete(selectedEmployee.getEmployeeCode())) 
-			 selectedEmployee = new Employee();
+	    if (dao.delete(selectedEmployee.getEmployeeCode())) {
+	        selectedEmployee = new Employee();
+	        employees = null; // reset lại danh sách
+	    }
 	}
 
 	public void save() {
-		 if (selectedEmployee.getDateOfBirth() != null) {
-			    LocalDate today = LocalDate.now();
-		        LocalDate birthDate = selectedEmployee.getDateOfBirth();  
-		        Period period = Period.between(birthDate, today);
-		        int age = period.getYears();  
-		        selectedEmployee.setEmployeeAge(age);	 
-		 }
-		      
-		if(!selectedEmployee.getEmployeeCode().isEmpty()) {
-			dao.update(selectedEmployee);
-		}
-		else {
-			selectedEmployee.setEmployeeCode(UUID.randomUUID().toString().substring(0, 8));
-			dao.add(selectedEmployee);
-		}
-		selectedEmployee = new Employee();
-		toggleForm();
-		 
+	    if (selectedEmployee.getDateOfBirth() != null) {
+	        LocalDate today = LocalDate.now();
+	        LocalDate birthDate = selectedEmployee.getDateOfBirth();
+	        int age = Period.between(birthDate, today).getYears();
+	        selectedEmployee.setEmployeeAge(age);
+	    }
+
+	    if (selectedEmployee.getEmployeeCode() != null && !selectedEmployee.getEmployeeCode().isEmpty()) {
+	        dao.update(selectedEmployee);
+	    } else {
+	        String nextCode = generateNextEmployeeCode();
+	        selectedEmployee.setEmployeeCode(nextCode);
+	        dao.add(selectedEmployee);
+	    }
+
+	    selectedEmployee = new Employee();
+	    employees = null; // refresh list
+	    toggleForm();
 	}
+
 
 
 	// Validate
@@ -140,6 +145,20 @@ public class EmployeeBean implements Serializable {
 
 	public void setShowForm(boolean showForm) {
 		this.showForm = showForm;
+	}
+	private String generateNextEmployeeCode() {
+	    List<Employee> allEmployees = dao.getEmployees(); // lấy từ DB
+	    int max = 0;
+
+	    for (Employee emp : allEmployees) {
+	        String code = emp.getEmployeeCode();
+	        if (code != null && code.matches("E\\d{3}")) {
+	            int num = Integer.parseInt(code.substring(1));
+	            if (num > max) max = num;
+	        }
+	    }
+
+	    return String.format("E%03d", max + 1);
 	}
 
 }
