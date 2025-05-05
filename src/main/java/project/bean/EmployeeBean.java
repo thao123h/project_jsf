@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 import java.util.List;
-import java.util.UUID;
+
 
 
 @Named
@@ -72,8 +72,7 @@ public class EmployeeBean implements Serializable {
 	    toggleForm();
 	}
 
-
-
+	
 	// Validate
 	public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 		 if (component instanceof EditableValueHolder) {
