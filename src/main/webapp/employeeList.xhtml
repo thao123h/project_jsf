@@ -30,29 +30,16 @@ table, th, td {
 		<h3>Employee</h3>
 
 		<h:inputHidden value="#{employeeBean.selectedEmployee.employeeCode}" />
-		<ui:formField
-  id="employeeName"
-  label="Employee Name:"
-  value="#{employeeBean.selectedEmployee.employeeName}"
-  converter="nameConverter">
-  
-  <f:facet name="validatorFacet">
-    <f:validator binding="#{employeeBean.validateName}" />
-  </f:facet>
-</ui:formField>
 
-<ui:formField
-  id="dateOfBirth"
-  label="Date of Birth:"
-  value="#{employeeBean.selectedEmployee.dateOfBirth}"
-  converter="dateConverter">
-  
-  <f:facet name="validatorFacet">
-    <f:validator binding="#{employeeBean.validateDate}" />
-  </f:facet>
-</ui:formField>
-
-
+		<ui:formField id="employeeName" label="Employee Name:"
+			value="#{employeeBean.selectedEmployee.employeeName}"
+			validator="#{employeeBean.validateName}" converter="nameConverter"
+			messageId="employeeNameMessage" />
+		<br />
+		<ui:formField id="dateOfBirth" label="Date of Birth:"
+			value="#{employeeBean.selectedEmployee.dateOfBirth}"
+			validator="#{employeeBean.validateDate}" converter="dateConverter"
+			messageId="dateOfBirthMessage" />
 
 		<!-- Buttons -->
 		<h:commandButton value="Back" action="#{employeeBean.toggleForm}">

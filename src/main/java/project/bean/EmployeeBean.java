@@ -159,5 +159,7 @@ public class EmployeeBean implements Serializable {
 
 	    return String.format("E%03d", max + 1);
 	}
-
+public static void main(String[] args) {
+	System.out.println("dddd");
+}
 }

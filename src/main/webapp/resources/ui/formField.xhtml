@@ -1,40 +1,39 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"> <!-- Thêm JSTL -->
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
 <composite:interface>
-  <composite:attribute name="label" required="true" />
-  <composite:attribute name="id" required="true" />
-  <composite:attribute name="value" required="true" />
-  <composite:attribute name="converter" required="false" />
-  <composite:attribute 
-    name="validatorMethod"
-    method-signature="void validate(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.Object)" 
-    required="false" />
+    <composite:attribute name="id" required="true" />
+    <composite:attribute name="label" required="true" />
+    <composite:attribute name="value" required="true" />
+    <composite:attribute name="validator"
+                         method-signature="void validate(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.Object)"
+                         required="false" />
+    <composite:attribute name="converter" required="false" />
+    <composite:attribute name="messageId" required="true" />
+  
 </composite:interface>
 
 <composite:implementation>
-  <h:outputLabel for="#{cc.attrs.id}" value="#{cc.attrs.label}" />
 
-  
-  
-<h:inputText id="#{cc.attrs.id}" value="#{cc.attrs.value}">
-  <f:ajax event="blur" execute="@this" render="@this msg_#{cc.attrs.id}" />
-  
-  <f:converter converterId="#{cc.attrs.converter}" />
-  
-  <composite:renderFacet name="validatorFacet"/>
-</h:inputText>
+    <h:outputLabel for="input" value="#{cc.attrs.label}" />
 
-  
-  
-  
-  <h:message for="#{cc.attrs.id}" id="msg_#{cc.attrs.id}" style="color:red;" />
-  <br />
+    <h:inputText id="input"
+                 value="#{cc.attrs.value}"
+                 validator="#{cc.attrs.validator}">
+        <f:ajax event="blur"
+                execute="@this"
+                render="@this #{cc.attrs.messageId}"
+                resetValues="true" />
+        <f:converter converterId="#{cc.attrs.converter}" rendered="#{not empty cc.attrs.converter}" />
+    </h:inputText>
+
+    <br />
+    <h:message id="#{cc.attrs.messageId}" for="input" style="color:red;" />
+
 </composite:implementation>
-
-
 
 </html>
